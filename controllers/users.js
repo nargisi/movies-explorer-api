@@ -82,7 +82,6 @@ module.exports.login = (req, res, next) => {
         });
     })
     .catch((err) => {
-      console.log(err.message);
       if (err.name === 'ValidationError') {
         next(new BadRequestError('Переданы некорректные данные!'));
       } else { next(new ServerError('Ошибка сервера!')); }

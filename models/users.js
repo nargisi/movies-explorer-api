@@ -22,6 +22,7 @@ const userSchema = new Schema(
     },
     name: {
       type: String,
+      required: true,
       minlength: [2, 'Должно быть не менее 2 символов!'],
       maxlength: 30,
     },

@@ -11,4 +11,4 @@ IP 84.201.167.18
 
 Бэкенд для дипломной работы. Найти можно по адресу:
 
-https://api.movies.nargisi.nomoredomains.icu/
+https://api.movies.nargisi.nomoredomains.icu/api/
