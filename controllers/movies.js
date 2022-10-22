@@ -6,7 +6,7 @@ const ForbiddenError = require('../errors/forbidden-err');
 const ServerError = require('../errors/server-err');
 
 module.exports.getMovies = (req, res, next) => {
-  Movie.find({})
+  Movie.find({ owner: req.user._id })
     .then((movies) => {
       res.send({ data: movies });
     })

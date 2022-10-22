@@ -4,10 +4,8 @@ function getSecret() {
   return NODE_ENV === 'production' ? JWT_SECRET : 'MY_SUPER_SECRET';
 }
 
-module.exports = { getSecret };
-
 function getMongoURL() {
   return NODE_ENV === 'production' ? MONGO_URL : 'mongodb://localhost:27017/bitfilmsdb';
 }
 
-module.exports = { getMongoURL };
+module.exports = { getSecret, getMongoURL };
