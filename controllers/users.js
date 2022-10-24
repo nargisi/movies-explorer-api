@@ -7,20 +7,24 @@ const NotFoundError = require('../errors/not-found-err');
 const UnauthorizedError = require('../errors/unathorized-err');
 const ServerError = require('../errors/server-err');
 const ConflictError = require('../errors/conflict-err');
-const { getSecret } = require('../utils');
+const {
+  notFoundErrMessage, BadRequestErrMessage, serverErrMessage,
+  conflictErrMessage, unathorizedErrMessage,
+} = require('../constants');
+const { tokenSecret } = require('../utils');
 
 module.exports.getAboutUser = (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => {
       if (user === null) {
-        next(new NotFoundError('Пользователя с таким id не существует!'));
+        next(new NotFoundError(notFoundErrMessage));
       } else res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new BadRequestError('Передан некорректный id!'));
+        next(new BadRequestError(BadRequestErrMessage));
       } else {
-        next(new ServerError('Ошибка сервера!'));
+        next(new ServerError(serverErrMessage));
       }
     });
 };
@@ -35,9 +39,13 @@ module.exports.updateUser = (req, res, next) => {
       res.send({ data: user });
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        next(new BadRequestError('Переданы некорректные данные!'));
-      } else { next(new ServerError('Ошибка сервера!')); }
+      if (err.code === 11000) {
+        next(new ConflictError(conflictErrMessage));
+      } else if (err.name === 'ValidationError') {
+        next(new BadRequestError(BadRequestErrMessage));
+      } else {
+        next(new ServerError(serverErrMessage));
+      }
     });
 };
 
@@ -52,10 +60,12 @@ module.exports.createUser = (req, res, next) => {
       })
       .catch((err) => {
         if (err.code === 11000) {
-          next(new ConflictError('Такой пользователь уже существует!'));
+          next(new ConflictError(conflictErrMessage));
         } else if (err.name === 'ValidationError') {
-          next(new BadRequestError('Переданы некорректные данные!'));
-        } else { next(new ServerError('Ошибка сервера!')); }
+          next(new BadRequestError(BadRequestErrMessage));
+        } else {
+          next(new ServerError(serverErrMessage));
+        }
       }));
 };
 
@@ -64,26 +74,24 @@ module.exports.login = (req, res, next) => {
   User.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
-        return next(new UnauthorizedError('Неправильная почта или пароль!'));
+        return next(new UnauthorizedError(unathorizedErrMessage));
       }
       return bcrypt.compare(password, user.password)
         // eslint-disable-next-line consistent-return
         .then((matched) => {
           if (!matched) {
-            return next(new UnauthorizedError('Неправильная почта или пароль!'));
+            return next(new UnauthorizedError(unathorizedErrMessage));
           }
           const token = jwt.sign(
             { _id: user._id },
-            getSecret(),
+            tokenSecret,
             { expiresIn: '7d' },
           );
 
           res.send({ data: token });
         });
     })
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        next(new BadRequestError('Переданы некорректные данные!'));
-      } else { next(new ServerError('Ошибка сервера!')); }
+    .catch(() => {
+      next(new ServerError(serverErrMessage));
     });
 };

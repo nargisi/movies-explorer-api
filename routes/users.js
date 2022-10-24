@@ -6,6 +6,6 @@ const { getAboutUser, updateUser } = require('../controllers/users');
 const { validationUpdateUser } = require('../middlewares/validation');
 
 router.get('/me', getAboutUser);
-router.patch('/me', validationUpdateUser(), updateUser);
+router.patch('/me', validationUpdateUser, updateUser);
 
 module.exports = router;

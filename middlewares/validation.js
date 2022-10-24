@@ -2,24 +2,23 @@ const { celebrate, Joi } = require('celebrate');
 Joi.objectId = require('joi-objectid')(Joi);
 const { patternURL } = require('../constants');
 
-const validationLogin = () => celebrate({
+const validationLogin = celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
     password: Joi.string().required(),
   }),
 });
 
-const validationCreateUser = () => celebrate({
+const validationCreateUser = celebrate({
   body: Joi.object()
     .keys({
       email: Joi.string().required().email(),
       password: Joi.string().required(),
       name: Joi.string().required().min(2).max(30),
-    })
-    .unknown(true),
+    }),
 });
 
-const validationCreateMovie = () => celebrate({
+const validationCreateMovie = celebrate({
   body: Joi.object().keys({
     country: Joi.string().required(),
     director: Joi.string().required(),
@@ -32,16 +31,16 @@ const validationCreateMovie = () => celebrate({
     movieId: Joi.number().required(),
     nameRU: Joi.string().required(),
     nameEN: Joi.string().required(),
-  }).unknown(true),
+  }),
 });
 
-const validationDeleteMovieById = () => celebrate({
+const validationDeleteMovieById = celebrate({
   params: Joi.object().keys({
     id: Joi.objectId(),
   }),
 });
 
-const validationUpdateUser = () => celebrate({
+const validationUpdateUser = celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
     name: Joi.string().required().min(2).max(30),

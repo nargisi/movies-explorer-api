@@ -6,17 +6,16 @@ require('dotenv').config();
 const { errors } = require('celebrate');
 const cors = require('cors');
 const router = require('./routes/index');
-const NotFoundError = require('./errors/not-found-err');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const handleErrors = require('./middlewares/handleErrors');
-const { getMongoURL } = require('./utils');
+const { varMongoURL } = require('./utils');
 const { limiter } = require('./middlewares/limiter');
 
 const { PORT = 3000 } = process.env;
 const app = express();
 app.use(helmet());
 
-mongoose.connect(getMongoURL(), {
+mongoose.connect(varMongoURL, {
   useNewUrlParser: true,
   autoIndex: true,
 });
@@ -34,11 +33,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(requestLogger);
 app.use(limiter);
 
-app.use('/api', router);
-
-app.use((req, res, next) => {
-  next(new NotFoundError('Страница не найдена!'));
-});
+app.use(router);
 
 app.use(errorLogger);
 app.use(errors());

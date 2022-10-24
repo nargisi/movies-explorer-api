@@ -1,11 +1,7 @@
 const { NODE_ENV, JWT_SECRET, MONGO_URL } = process.env;
 
-function getSecret() {
-  return NODE_ENV === 'production' ? JWT_SECRET : 'MY_SUPER_SECRET';
-}
+const tokenSecret = NODE_ENV === 'production' ? JWT_SECRET : 'MY_SUPER_SECRET';
 
-function getMongoURL() {
-  return NODE_ENV === 'production' ? MONGO_URL : 'mongodb://localhost:27017/bitfilmsdb';
-}
+const varMongoURL = NODE_ENV === 'production' ? MONGO_URL : 'mongodb://localhost:27017/moviesdb';
 
-module.exports = { getSecret, getMongoURL };
+module.exports = { tokenSecret, varMongoURL };
