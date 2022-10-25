@@ -77,10 +77,10 @@ module.exports.login = (req, res, next) => {
         return next(new UnauthorizedError(unathorizedErrMessage));
       }
       return bcrypt.compare(password, user.password)
-        // eslint-disable-next-line consistent-return
         .then((matched) => {
           if (!matched) {
-            return next(new UnauthorizedError(unathorizedErrMessage));
+            next(new UnauthorizedError(unathorizedErrMessage));
+            return;
           }
           const token = jwt.sign(
             { _id: user._id },
